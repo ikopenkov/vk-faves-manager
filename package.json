@@ -9,13 +9,19 @@
     "build": "npm run clean && npm run tsc --",
     "lint": "tslint src/**/*.ts",
     "watch": "npm run build -- -w",
+    "android": "react-native-scripts android",
+    "ios": "react-native-scripts ios",
     "start:ios": "npm run build && concurrently -r 'npm run watch' 'react-native run-ios'",
     "start:android": "npm run build && concurrently -r 'npm run watch' 'react-native run-android'",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "postinstall": "remotedev-debugger — hostname localhost — port 5678 — injectserver"
   },
   "dependencies": {
+    "@types/react-redux": "^5.0.12",
+    "@types/redux": "^3.6.0",
     "react": "16.0.0",
     "react-native": "0.50.3",
+    "react-native-scripts": "^1.7.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-promise": "^0.5.3",
@@ -50,5 +56,9 @@
       "!artifacts/**/*.spec.js",
       "!artifacts/**/*.index.js"
     ]
+  },
+  "remotedev": {
+    "hostname": "localhost",
+    "port": 5678
   }
 }
