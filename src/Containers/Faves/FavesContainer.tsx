@@ -1,23 +1,29 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
 import { selectFavesList, selectIsLoaded, selectIsLoading } from '../../Reducers/FavesReducer';
+import { loadFaves } from '../../Actions/FavesActions';
 
 interface Props {
   favesList?: Object[];
   isLoaded: boolean;
   isLoading: boolean;
+  loadFaves(): void;
 }
 
-class FavesContainer extends Component<Props, any> {
+class FavesContainer extends React.Component<Props, {}> {
+  public componentDidMount() {
+    console.log('load');
+    this.props.loadFaves();
+  }
+
   public render() {
     console.log('------ faves ------', this.props.favesList);
+    console.log('------ isLoaded ------', this.props.isLoaded);
 
     return (
       <View>
-        <Text>
-          asdf
-        </Text>
+        <Text>asdf</Text>
       </View>
     );
   }
@@ -29,4 +35,8 @@ const mapStateToProps = state => ({
   isLoading: selectIsLoading(state),
 });
 
-export default connect(mapStateToProps, null)(FavesContainer);
+const mapDispatchToProps = dispatch => ({
+  loadFaves: () => dispatch(loadFaves()),
+});
+
+export default connect<{}, {}>(mapStateToProps, mapDispatchToProps)(FavesContainer);
