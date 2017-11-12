@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
+import { selectFavesList, selectIsLoaded, selectIsLoading } from '../../Reducers/FavesReducer';
 
 interface Props {
-  faves: Object;
+  favesList?: Object[];
+  isLoaded: boolean;
+  isLoading: boolean;
 }
 
 class FavesContainer extends Component<Props, any> {
   public render() {
-    console.log('faves', this.props.faves);
+    console.log('------ faves ------', this.props.favesList);
 
     return (
       <View>
         <Text>
-          Faves ------- 
+          asdf
         </Text>
       </View>
     );
@@ -21,7 +24,9 @@ class FavesContainer extends Component<Props, any> {
 }
 
 const mapStateToProps = state => ({
-  faves: state.faves,
+  favesList: selectFavesList(state),
+  isLoaded: selectIsLoaded(state),
+  isLoading: selectIsLoading(state),
 });
 
-export default connect(mapStateToProps)(FavesContainer);
+export default connect(mapStateToProps, null)(FavesContainer);
