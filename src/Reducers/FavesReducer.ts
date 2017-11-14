@@ -1,7 +1,10 @@
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import { loadingFaves, loadingFavesFailed, loadingFavesSucceeded } from '../Actions/ActionCreators';
-import { handleActions } from 'redux-actions';
+import { handleActions, Action } from 'redux-actions';
+import { Fave } from '../api/FavesApi';
+// import { State } from './index';
+
 
 // const initialState = {
 //   list: [],
@@ -20,27 +23,29 @@ import { handleActions } from 'redux-actions';
 
 const loading = handleActions(
   {
-    [loadingFaves.toString()]: () => '1',
-    [loadingFavesSucceeded.toString()]: () => '2',
-    [loadingFavesFailed.toString()]: () => '3',
+    [loadingFaves.toString()]: () => true,
+    [loadingFavesSucceeded.toString()]: () => false,
+    [loadingFavesFailed.toString()]: () => false,
   },
-  'default'
+  false
 );
 
 const loaded = handleActions(
   {
-    [loadingFaves.toString()]: () => '1',
-    [loadingFavesSucceeded.toString()]: () => '2',
-    [loadingFavesFailed.toString()]: () => '3',
+    [loadingFaves.toString()]: () => false,
+    [loadingFavesSucceeded.toString()]: () => true,
+    [loadingFavesFailed.toString()]: () => false,
   },
-  'default'
+  false
 );
 
 const list = handleActions(
   {
-    [loadingFaves.toString()]: () => ['nedef'],
+    [loadingFavesSucceeded.toString()]: (_, action: Action<Fave[]>) => {
+      return action.payload.slice();
+    },
   },
-  ['def']
+  []
 );
 
 // export default (state = initialState) => {
@@ -57,10 +62,14 @@ export default faves;
 
 const selectFaves = state => state.faves;
 
-const selectIsLoading = createSelector(selectFaves, favesState => favesState.loading);
+export const selectIsLoading = createSelector(selectFaves, favesState => favesState.loading);
 
-const selectIsLoaded = createSelector(selectFaves, favesState => favesState.loaded);
+export const selectIsLoaded = createSelector(selectFaves, favesState => favesState.loaded);
 
-const selectFavesList = createSelector(selectFaves, favesState => favesState.list);
+export const selectFavesList = createSelector(selectFaves, favesState => favesState.list);
 
-export { selectIsLoading, selectIsLoaded, selectFavesList };
+export interface FavesState {
+  loading: boolean;
+  loaded: boolean;
+  list: any[];
+}
