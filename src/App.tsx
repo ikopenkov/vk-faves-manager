@@ -8,8 +8,7 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import store from './Store';
 import { Router, Stack, Scene } from 'react-native-router-flux';
-import Faves from './Containers/Faves';
-import Login from './Containers/Login';
+import Home from './Containers/Home';
 import TokenWebView from './Containers/TokenWebView';
 
 // const instructions = Platform.select({
@@ -24,8 +23,7 @@ export default class App extends Component<{}> {
       <Provider store={store}>
         <Router>
           <Stack key="root">
-            <Scene key="login" component={Login} />
-            <Scene back={false} key="faves" component={Faves} title="Faves" />
+            <Scene key="home" component={Home} title="Home" />
             <Scene key="tokenWebView" component={TokenWebView} title="VK authorization" />
           </Stack>
         </Router>

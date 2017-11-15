@@ -5,7 +5,7 @@ import { StyleSheet, View, WebView, NavState } from 'react-native';
 import { VK_OAUTH_URL } from '../../Constants';
 import urlParamParse from 'url-param-parser';
 import { setToken } from '../../Actions/UserActions';
-import { Actions } from 'react-native-router-flux';
+import { Actions home from 'react-native-router-flux';
 
 interface Props {
   // onGotToken(token: string): void;
@@ -24,7 +24,7 @@ class TokenWebView extends Component<Props> {
     const hashData: { [key: string]: string } = parsedUrl.hash;
     if (hashData && hashData.access_token) {
       this.props.setToken(hashData.access_token);
-      Actions.faves();
+      Actions.pop();
       // this.props.onGotToken(hashData.access_token);
     }
   }

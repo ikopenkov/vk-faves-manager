@@ -1,2 +1,2 @@
-import component from './LoginScene';
+import component from './Login';
 export default component;
