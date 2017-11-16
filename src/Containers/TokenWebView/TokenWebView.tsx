@@ -5,7 +5,7 @@ import { StyleSheet, View, WebView, NavState } from 'react-native';
 import { VK_OAUTH_URL } from '../../Constants';
 import urlParamParse from 'url-param-parser';
 import { setToken } from '../../Actions/UserActions';
-import { Actions home from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 
 interface Props {
   // onGotToken(token: string): void;

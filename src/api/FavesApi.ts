@@ -27,7 +27,7 @@ export type FavesResponse = Promise<{
   }
 }>;
 export interface Fave {
-  attachments: Object[];
+  attachments: Attachment[];
   comments: Comment;
   date: number;
   from_id: number;
@@ -47,8 +47,34 @@ export interface Fave {
   };
 }
 
-interface Comment {
+export interface Comment {
   count: number;
   groups_can_post: boolean;
   can_post: number;
+}
+
+export enum AttachmentTypes {
+  photo = "photo",
+}
+
+export interface Attachment {
+  type: AttachmentTypes;
+  photo?: Photo;
+}
+
+export interface Photo {
+  access_key: string;
+  album_id: number;
+  date: number;
+  height: number;
+  id: number;
+  owner_id: number;
+  photo_75: string;
+  photo_130: string;
+  photo_604: string;
+  photo_807?: string;
+  post_id: number;
+  text: string;
+  user_id: number;
+  width: number;
 }

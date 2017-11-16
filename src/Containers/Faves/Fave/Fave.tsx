@@ -3,6 +3,7 @@ import { View, Text, LayoutChangeEvent, StyleSheet } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/ru';
 import { Fave as FaveData } from '../../../Api/FavesApi';
+import ImagesGrid from '../ImagesGrid';
 
 const NUMBER_OF_LINES_TRUNCATED = 9;
 
@@ -70,8 +71,15 @@ class Fave extends React.Component<Props, State> {
     const { faveData } = this.props;
     const { date, text } = faveData;
     const { isTruncated } = this.state;
+
+    const attachments = faveData.attachments || [];
+    const photos = attachments.filter(item => item.photo).map(item => item.photo);
+
+    const containerStyle = this.isHeightChecked ? styles.container : styles.hidden;
+    console.log(faveData);
+
     return (
-      <View style={styles.container}>
+      <View style={containerStyle}>
         <View style={styles.header}>
           <View style={styles.avatar} />
           <View style={styles.headerCaptions}>
@@ -79,6 +87,7 @@ class Fave extends React.Component<Props, State> {
             <Text style={styles.date}>{this.formatDate(date)}</Text>
           </View>
         </View>
+
         <View style={styles.textContainer}>
           <Text
             onLayout={this.onLayout}
@@ -88,6 +97,10 @@ class Fave extends React.Component<Props, State> {
             {text}
           </Text>
           {isTruncated ? this.renderShowMore() : null}
+        </View>
+
+        <View>
+          <ImagesGrid items={photos} />
         </View>
       </View>
     );
@@ -141,6 +154,9 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontWeight: 'bold',
     fontSize: 15,
+  },
+  hidden: {
+    opacity: 0,
   },
 });
 

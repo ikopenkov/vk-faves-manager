@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { selectFavesList, selectIsLoaded, selectIsLoading } from '../../Reducers/FavesReducer';
 import { loadFaves } from '../../Actions/FavesActions';
 import { Fave as FaveData } from '../../Api/FavesApi';
 import { State } from '../../Reducers';
 import Fave from './Fave';
-import moment from 'moment';
 import 'moment/locale/ru';
 
 interface MapStateProps {
