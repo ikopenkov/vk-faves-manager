@@ -46,7 +46,11 @@ class Fave extends React.Component<Props, State> {
 
     if (this.originalHeight === null) {
       this.originalHeight = height;
-      this.setState({ numberOfLines: NUMBER_OF_LINES_TRUNCATED });
+      this.setState({ numberOfLines: NUMBER_OF_LINES_TRUNCATED }, () => {
+        if (!this.isHeightChecked) {
+          this.isHeightChecked = true;
+        }
+      });
     } else if (!this.isHeightChecked) {
       this.isHeightChecked = true;
       if (height < this.originalHeight) {
@@ -67,16 +71,33 @@ class Fave extends React.Component<Props, State> {
     this.setState({ isTruncated: false, numberOfLines: null });
   }
 
+  private renderText() {
+    const { isTruncated } = this.state;
+    const { text } = this.props.faveData;
+    return (
+      !!text && (
+        <View style={styles.textContainer}>
+          <Text
+            onLayout={this.onLayout}
+            numberOfLines={this.state.numberOfLines}
+            style={styles.text}
+          >
+            {text}
+          </Text>
+          {isTruncated && this.renderShowMore()}
+        </View>
+      )
+    );
+  }
+
   public render() {
     const { faveData } = this.props;
-    const { date, text } = faveData;
-    const { isTruncated } = this.state;
+    const { date } = faveData;
 
     const attachments = faveData.attachments || [];
     const photos = attachments.filter(item => item.photo).map(item => item.photo);
 
     const containerStyle = this.isHeightChecked ? styles.container : styles.hidden;
-    console.log(faveData);
 
     return (
       <View style={containerStyle}>
@@ -88,16 +109,7 @@ class Fave extends React.Component<Props, State> {
           </View>
         </View>
 
-        <View style={styles.textContainer}>
-          <Text
-            onLayout={this.onLayout}
-            numberOfLines={this.state.numberOfLines}
-            style={styles.text}
-          >
-            {text}
-          </Text>
-          {isTruncated ? this.renderShowMore() : null}
-        </View>
+        {this.renderText()}
 
         <View>
           <ImagesGrid items={photos} />

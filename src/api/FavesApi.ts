@@ -14,7 +14,10 @@ export const loadFaves = (token: string): FavesResponse => {
   });
   return fetch(url)
     .then(response => response.json())
-    .then(res => {console.log('res', res); return res;})
+    .then(res => {
+      console.log('res', res);
+      return res;
+    })
     .catch(error => {
       throw error;
     });
@@ -24,7 +27,7 @@ export type FavesResponse = Promise<{
   response: {
     count: number;
     items: Fave[];
-  }
+  };
 }>;
 export interface Fave {
   attachments: Attachment[];
@@ -54,7 +57,7 @@ export interface Comment {
 }
 
 export enum AttachmentTypes {
-  photo = "photo",
+  photo = 'photo',
 }
 
 export interface Attachment {

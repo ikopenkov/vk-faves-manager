@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, TouchableHighlight, Image, StyleSheet } from 'react-native';
 import { Photo } from '../../../api/FavesApi';
 import { popNumber } from '../../../Utils/Array';
 
@@ -12,36 +12,61 @@ interface State {
   isTruncated: boolean;
 }
 
-interface RenderItemParams {
+interface RenderImageParams {
   uri: string;
   width: string | number;
   height: string | number;
+  key: number;
+  photo: Photo;
 }
 
 class ImagesGrid extends React.Component<Props, State> {
-  // private renderSingleItem(item: Photo) {
-  //   return this.renderItem({
-  //     uri: item.photo_604,
-  //     width: '100%',
-  //     height: 200,
-  //   });
-  // }
+  constructor(props: Props, state: State) {
+    super(props, state);
 
-  // private renderTwiceItems(items: Photo[]) {
-  //   return items.map(item =>
-  //     this.renderItem({
-  //       uri: item.photo_130,
-  //       width: '49%',
-  //       height: 100,
-  //     })
-  //   );
-  // }
+    this.imageTouchHandler = this.imageTouchHandler.bind(this);
+  }
+  private renderImagesRows(givenItems: Photo[], rows: React.ReactNode[][] = []) {
+    const items = givenItems.slice();
 
-  private renderSomeItems(items: Photo[]) {
+    const popRenderPush = number => {
+      const usedItems = popNumber(items, number);
+      rows.push(this.renderSomeImages(usedItems));
+    };
+
+    if (items.length >= 10) {
+      popRenderPush(6);
+    } else if (items.length === 9) {
+      popRenderPush(5);
+    } else if (items.length >= 7) {
+      popRenderPush(4);
+    } else if (items.length >= 5) {
+      popRenderPush(3);
+    } else if (items.length === 4) {
+      popRenderPush(3);
+    } else if (items.length === 3) {
+      popRenderPush(2);
+    } else if (items.length) {
+      popRenderPush(items.length);
+    }
+
+    if (items.length) {
+      rows = this.renderImagesRows(items, rows);
+    }
+
+    return rows;
+  }
+
+  private renderSomeImages(items: Photo[]) {
     const paramsByNumber = {
+      6: {
+        height: 40,
+        width: '16%',
+        photoSize: 'photo_75',
+      },
       5: {
         height: 50,
-        width: '19%',
+        width: '19.2%',
         photoSize: 'photo_75',
       },
       4: {
@@ -51,17 +76,17 @@ class ImagesGrid extends React.Component<Props, State> {
       },
       3: {
         height: 70,
-        width: '32%',
+        width: '32.7%',
         photoSize: 'photo_130',
       },
       2: {
         height: 100,
-        width: '49%',
+        width: '49.5%',
         photoSize: 'photo_130',
       },
       1: {
         height: 200,
-        width: '49%',
+        width: '100%',
         photoSize: 'photo_604',
       },
     };
@@ -71,66 +96,56 @@ class ImagesGrid extends React.Component<Props, State> {
     }
 
     return items.map(item =>
-      this.renderItem({
+      this.renderImage({
         uri: item[params.photoSize],
+        key: item.id,
         width: params.width,
         height: params.height,
+        photo: item,
       })
     );
   }
 
-  private renderItem({ uri, width, height }: RenderItemParams) {
-    return <Image style={{ width, height }} source={{ uri }} />;
+  private renderImage({ photo, key, uri, width, height }: RenderImageParams) {
+    return (
+      <TouchableHighlight key={key} style={{ width, height }} onPress={() => this.imageTouchHandler(photo)}>
+        <Image style={styles.imageWrapper} source={{ uri }} />
+      </TouchableHighlight>
+    );
   }
 
-  private renderRows(givenItems: Photo[], acc: React.ReactNode[] = []) {
-    const items = givenItems.slice();
-
-    const popItemsAddRendered = number => {
-      const before = items.length;
-      const usedItems = popNumber(items, number);
-      console.log('before', before, 'usedItems', usedItems.length, 'items', items.length);
-      acc = acc.concat(this.renderSomeItems(usedItems));
-    };
-
-    if (items.length > 9) {
-      popItemsAddRendered(5);
-    } else if (items.length >= 9) {
-      popItemsAddRendered(4);
-    } else if (items.length >= 7) {
-      popItemsAddRendered(3);
-    } else if (items.length >= 5) {
-      popItemsAddRendered(2);
-    } else if (items.length === 4) {
-      popItemsAddRendered(3);
-    } else if (items.length === 3) {
-      popItemsAddRendered(2);
-    } else if (items.length) {
-      popItemsAddRendered(items.length);
-    }
-
-    if (items.length >= 3) {
-      this.renderRows(items, acc);
-    }
-
-    return acc;
+  private imageTouchHandler(photo: Photo) {
+    console.log(photo);
   }
 
   public render() {
     const { items } = this.props;
-    const output = this.renderRows(items);
-    console.log('-- output', output);
-    
+    const rows = this.renderImagesRows(items).reverse();
 
-    return <View style={styles.container}>{output}</View>;
+    return (
+      <View style={styles.container}>
+        {rows.map((row, index) => (
+          <View key={index} style={styles.row}>
+            {row}
+          </View>
+        ))}
+      </View>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  imageWrapper: {
+    flex: 1,
+  },
+  row: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 3,
   },
 });
 

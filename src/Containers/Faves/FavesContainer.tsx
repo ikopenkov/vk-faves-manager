@@ -28,7 +28,6 @@ class FavesContainer extends React.Component<Props, any> {
   }
 
   public componentDidMount() {
-    console.log('load');
     this.props.loadFaves();
   }
 
