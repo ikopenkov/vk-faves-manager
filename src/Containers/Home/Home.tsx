@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
-// import { View, StyleSheet, Button } from 'react-native';
-// import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { selectIsTokenSet } from '../../Reducers/UserReducer';
 import Faves from '../Faves';
 import Login from '../Login';
+import { loadStoredToken as loadStoredTokenAction } from '../../Actions/UserActions';
+import { State } from '../../Reducers';
 
-interface Props {
+interface MapStateProps {
   hasToken: boolean;
 }
+interface MapDispatchProps {
+  loadStoredToken(): Promise<string>;
+}
+interface Props extends MapDispatchProps, MapStateProps {}
 
-class LoginScene extends Component<Props> {
+class Home extends Component<Props> {
+  public componentWillMount() {
+    const { hasToken, loadStoredToken } = this.props;
+    if (!hasToken) {
+      loadStoredToken();
+    }
+  }
+
   public render() {
     const { hasToken } = this.props;
 
@@ -37,8 +48,12 @@ class LoginScene extends Component<Props> {
 //   },
 // });
 
-const mapStateToProps = state => ({
+const mapStateToProps: (state: State) => MapStateProps = state => ({
   hasToken: selectIsTokenSet(state),
 });
 
-export default connect(mapStateToProps, null)(LoginScene);
+const mapDispatchToProps: (dispatch: any) => MapDispatchProps = dispatch => ({
+  loadStoredToken: () => dispatch(loadStoredTokenAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

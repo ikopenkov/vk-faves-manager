@@ -14,10 +14,7 @@ const isTokenSet = handleActions(
 
 const token = handleActions(
   {
-    [setTokenAction.toString()]: (state: State, action: Action<string>) => {
-      console.log('AAAAAaaaaAAAAA');
-      
-      console.log('asdfsad', action, state);
+    [setTokenAction.toString()]: (_: State, action: Action<string>) => {
       return action.payload;
     },
     [unsetTokenAction.toString()]: () => null,

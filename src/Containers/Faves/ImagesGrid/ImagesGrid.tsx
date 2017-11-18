@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View, TouchableHighlight, Image, StyleSheet } from 'react-native';
 import { Photo } from '../../../api/FavesApi';
 import { popNumber } from '../../../Utils/Array';
+import { Actions } from 'react-native-router-flux';
 
 interface Props {
   items: Photo[];
@@ -108,14 +109,24 @@ class ImagesGrid extends React.Component<Props, State> {
 
   private renderImage({ photo, key, uri, width, height }: RenderImageParams) {
     return (
-      <TouchableHighlight key={key} style={{ width, height }} onPress={() => this.imageTouchHandler(photo)}>
+      <TouchableHighlight
+        key={key}
+        style={{ width, height }}
+        onPress={() => this.imageTouchHandler(photo)}
+      >
         <Image style={styles.imageWrapper} source={{ uri }} />
       </TouchableHighlight>
     );
   }
 
   private imageTouchHandler(photo: Photo) {
-    console.log(photo);
+    const { items } = this.props;
+    const index = items.findIndex(item => item === photo);
+    
+    Actions.photo({
+      items,
+      index,
+    });
   }
 
   public render() {

@@ -1,22 +1,32 @@
-// import * as api from '../';
-// import Notifications from 'react-notification-system-redux';
-import {
-  // loadingFeed,
-  // loadingFeedSucceeded,
-  // loadingFeedFailed,
-  setTokenAction,
-  unsetTokenAction,
-} from './ActionCreators';
+import { setTokenAction, unsetTokenAction } from './ActionCreators';
+import { selectStorageInstance } from '../Reducers/StorageReducer';
 
-// const onError = (error, dispatch, errorAction) => {
-//   dispatch(errorAction(error));
-//   dispatch(Notifications.show({
-//     message: 'Сервер временно недоступен',
-//     autoDismiss: 3,
-//   }, 'error'));
-// };
+export const loadStoredToken = () => (dispatch, getState): Promise<string> => {
+  const storage = selectStorageInstance(getState());
 
-export const setToken = (token: string) => dispatch => dispatch(setTokenAction(token));
+  return storage
+    .load({
+      key: 'token',
+    })
+    .then((token: string) => {
+      dispatch(setTokenAction(token));
+      return token;
+    })
+    .catch((error: string) => {
+      console.log('no token stored');
+      return error;
+    });
+};
+
+export const setToken = (token: string) => (dispatch, getState) => {
+  const storage = selectStorageInstance(getState());
+  storage.save({
+    key: 'token',
+    data: token,
+  });
+
+  return dispatch(setTokenAction(token));
+};
 export type setToken = (token: string) => void;
 
 export const unsetToken = () => dispatch => dispatch(unsetTokenAction());

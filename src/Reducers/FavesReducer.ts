@@ -3,24 +3,6 @@ import { createSelector } from 'reselect';
 import { loadingFaves, loadingFavesFailed, loadingFavesSucceeded } from '../Actions/ActionCreators';
 import { handleActions, Action } from 'redux-actions';
 import { Fave } from '../api/FavesApi';
-// import { State } from './index';
-
-
-// const initialState = {
-//   list: [],
-//   isLoading: false,
-//   isLoaded: false,
-// };
-
-// const loading = handleActions(
-//   {
-//     [loadingFaves.toString()]: () => true,
-//     [loadingFavesSucceeded.toString()]: () => false,
-//     [loadingFavesFailed.toString()]: () => false,
-//   },
-//   false
-// );
-
 const loading = handleActions(
   {
     [loadingFaves.toString()]: () => true,
@@ -43,7 +25,6 @@ const list = handleActions(
   {
     [loadingFavesSucceeded.toString()]: (_, action: Action<Fave[]>) => {
       let faves = action.payload.slice();
-      faves = faves.splice(6);
       return faves;
     },
   },
