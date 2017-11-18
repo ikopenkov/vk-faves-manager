@@ -17,8 +17,7 @@ interface MapDispatchProps {
   loadFaves(): void;
 }
 
-interface Props extends MapStateProps, MapDispatchProps {
-}
+interface Props extends MapStateProps, MapDispatchProps {}
 
 class FavesContainer extends React.Component<Props, any> {
   constructor(props: Props) {
@@ -45,7 +44,11 @@ class FavesContainer extends React.Component<Props, any> {
 
     return (
       <View style={styles.container}>
-        <FlatList data={faves} renderItem={({ item }) => this.renderFave(item)} />
+        <FlatList
+          keyExtractor={(_: Fave, index: number) => index.toString()}
+          data={faves}
+          renderItem={({ item }) => this.renderFave(item)}
+        />
       </View>
     );
   }
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#efefef',
     marginBottom: 12,
-  }
+  },
 });
 
 const mapStateToProps: (state: State) => MapStateProps = state => ({

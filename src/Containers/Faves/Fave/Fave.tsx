@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { View, Text, LayoutChangeEvent, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/ru';
 import { Fave as FaveData } from '../../../Api/FavesApi';
 import ImagesGrid from '../ImagesGrid';
+import TruncatedText from '../../../Components/TruncatedText';
 
 const NUMBER_OF_LINES_TRUNCATED = 9;
 
@@ -12,25 +13,13 @@ interface Props {
 }
 
 interface State {
-  numberOfLines?: number;
-  isTruncated: boolean;
+  isVisible: boolean;
 }
 
 class Fave extends React.Component<Props, State> {
-  constructor(props: Props, state: State) {
-    super(props, state);
-
-    this.onLayout = this.onLayout.bind(this);
-    this.onShowMorePress = this.onShowMorePress.bind(this);
-  }
-
   public state: State = {
-    numberOfLines: undefined,
-    isTruncated: false,
+    isVisible: !this.props.faveData.text,
   };
-
-  private originalHeight: number = null;
-  private isHeightChecked: boolean = false;
 
   /**
    * @param date // unix timestamp - seconds from 1970
@@ -41,63 +30,30 @@ class Fave extends React.Component<Props, State> {
     return dateObj.locale('ru').format('DD MMMM Y, hh:mm');
   }
 
-  private onLayout(event: LayoutChangeEvent) {
-    const { height } = event.nativeEvent.layout;
-
-    if (this.originalHeight === null) {
-      this.originalHeight = height;
-      this.setState({ numberOfLines: NUMBER_OF_LINES_TRUNCATED }, () => {
-        if (!this.isHeightChecked) {
-          this.isHeightChecked = true;
-        }
-      });
-    } else if (!this.isHeightChecked) {
-      this.isHeightChecked = true;
-      if (height < this.originalHeight) {
-        this.setState({ isTruncated: true });
-      }
-    }
-  }
-
-  private renderShowMore() {
-    return (
-      <Text onPress={this.onShowMorePress} style={styles.showMore}>
-        Показать полностью...
-      </Text>
-    );
-  }
-
-  private onShowMorePress() {
-    this.setState({ isTruncated: false, numberOfLines: null });
-  }
-
   private renderText() {
-    const { isTruncated } = this.state;
     const { text } = this.props.faveData;
     return (
       !!text && (
-        <View style={styles.textContainer}>
-          <Text
-            onLayout={this.onLayout}
-            numberOfLines={this.state.numberOfLines}
-            style={styles.text}
-          >
-            {text}
-          </Text>
-          {isTruncated && this.renderShowMore()}
-        </View>
+        <TruncatedText
+          onSetVisible={() => this.setState({ isVisible: true })}
+          numberOfLines={NUMBER_OF_LINES_TRUNCATED}
+        >
+          {text}
+        </TruncatedText>
       )
     );
   }
 
   public render() {
+    const { isVisible } = this.state;
     const { faveData } = this.props;
     const { date } = faveData;
 
     const attachments = faveData.attachments || [];
     const photos = attachments.filter(item => item.photo).map(item => item.photo);
 
-    const containerStyle = this.isHeightChecked ? styles.container : styles.hidden;
+    const containerStyle = isVisible ? styles.container : styles.hidden;
+    // const containerStyle = styles.container;
 
     return (
       <View style={containerStyle}>
