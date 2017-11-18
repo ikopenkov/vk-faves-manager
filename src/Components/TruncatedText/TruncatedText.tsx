@@ -31,17 +31,15 @@ class Fave extends React.Component<Props, State> {
   private onLayout(event: LayoutChangeEvent) {
     const { height } = event.nativeEvent.layout;
     const { numberOfLines, onSetVisible } = this.props;
-    
+
     if (this.originalHeight === null) {
-      console.log('--- 1 ----');
-      
       this.originalHeight = height;
       this.setState({ numberOfLines });
     } else if (!this.isHeightChecked) {
-      console.log('--- 2 ----');
       this.isHeightChecked = true;
 
-      if (height < this.originalHeight) {
+      // height for some reason smaller for 1 px at this time
+      if (height + 1 < this.originalHeight) {
         this.setState({ isTruncated: true });
       }
 
@@ -63,6 +61,10 @@ class Fave extends React.Component<Props, State> {
     this.setState({ isTruncated: false, numberOfLines: null });
   }
 
+  private forceRerender() {
+    return <View style={{ width: 1, height: 1 }} />;
+  }
+
   public render() {
     const { isTruncated, numberOfLines } = this.state;
     const { children } = this.props;
@@ -72,10 +74,7 @@ class Fave extends React.Component<Props, State> {
           {children}
         </Text>
         {isTruncated && this.renderShowMore()}
-        {
-          !numberOfLines &&
-          <View style={{ borderWidth: 2, borderColor: 'black', width: 1, height: 1 }} />
-        }
+        {!numberOfLines && !this.isHeightChecked && this.forceRerender()}
       </View>
     );
   }
