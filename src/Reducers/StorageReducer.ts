@@ -8,7 +8,7 @@ import { AsyncStorage } from 'react-native';
 
 const STORAGE = new Storage({
   // maximum capacity, default 1000
-  size: 1000,
+  size: 50000,
 
   // Use AsyncStorage for RN, or window.localStorage for web.
   // If not set, data would be lost after reload.
@@ -58,15 +58,19 @@ export interface StorageState {
 }
 
 export interface StorageInstance {
-  save(params: SaveParams): void;
+  save(params: SaveParams): Promise<void>;
   remove: StorageRemove;
   load: StorageLoad<any>;
+  getIdsForKey(key: string): Promise<string[]>;
+  getAllDataForKey(key: string): Promise<any>;
+  clearMapForKey(key: string): Promise<void>;
 }
 
 export type StorageLoad<T> = (params: LoadParams) => Promise<T>;
 
 interface SaveParams {
   key: string;
+  id?: string;
   data: any;
   expires?: number;
 }
@@ -74,10 +78,12 @@ interface SaveParams {
 export type StorageRemove = (params: RemoveParams) => Promise<void>;
 interface RemoveParams {
   key: string;
+  id?: string;
 }
 
 interface LoadParams {
   key: string;
+  id?: string;
 
   // autoSync(default true) means if data not found or expired,
   // then invoke the corresponding sync method

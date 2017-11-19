@@ -24,8 +24,7 @@ const loaded = handleActions(
 const list = handleActions(
   {
     [loadingFavesSucceeded.toString()]: (_, action: Action<Fave[]>) => {
-      let faves = action.payload.slice();
-      return faves;
+      return action.payload.slice();
     },
   },
   []

@@ -1,10 +1,26 @@
 import * as Url from 'url';
 import { VK_API_VERSION } from '../Constants';
+import FaveStorage from './DataStorage/RNFavesStorage';
 
-export const loadFaves = (token: string): FavesResponse => {
+const faveStorage = new FaveStorage();
+
+export const saveFaveToBd = (fave: Fave) => {
+  return faveStorage.create(fave);
+};
+
+export const fetchSavedFaves = () => {
+  return faveStorage.fetch();
+};
+
+export const clearSavedFaves = () => {
+  return faveStorage.clearAll();
+};
+
+export const loadFaves = (token: string): Promise<FavesResponse> => {
   const query = {
     access_token: token,
     v: VK_API_VERSION,
+    extended: 1,
   };
   const url = Url.format({
     protocol: 'https',
@@ -14,21 +30,21 @@ export const loadFaves = (token: string): FavesResponse => {
   });
   return fetch(url)
     .then(response => response.json())
-    .then(res => {
-      console.log('res', res);
+    .then((res: FavesResponse) => {
       return res;
     })
     .catch(error => {
       throw error;
     });
 };
-export type FavesResponse = Promise<{
+export interface FavesResponse {
   type: string;
   response: {
     count: number;
     items: Fave[];
   };
-}>;
+}
+
 export interface Fave {
   attachments: Attachment[];
   comments: Comment;

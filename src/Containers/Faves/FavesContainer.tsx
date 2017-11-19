@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
 import { selectFavesList, selectIsLoaded, selectIsLoading } from '../../Reducers/FavesReducer';
 import { loadFaves } from '../../Actions/FavesActions';
 import { Fave as FaveData } from '../../Api/FavesApi';
 import { State } from '../../Reducers';
 import Fave from './Fave';
+import ImportButton from '../Home/ImportButton';
 import 'moment/locale/ru';
 
 interface MapStateProps {
@@ -27,7 +28,18 @@ class FavesContainer extends React.Component<Props, any> {
   }
 
   public componentDidMount() {
-    this.props.loadFaves();
+    // this.props.loadFaves();
+  }
+
+  private renderFaveList() {
+    const { faves } = this.props;
+    return (
+      <FlatList
+        keyExtractor={(_: Fave, index: number) => index.toString()}
+        data={faves}
+        renderItem={({ item }) => this.renderFave(item)}
+      />
+    );
   }
 
   private renderFave(fave: FaveData) {
@@ -39,18 +51,21 @@ class FavesContainer extends React.Component<Props, any> {
     );
   }
 
-  public render() {
-    const { faves } = this.props;
-
+  private renderImportButton() {
     return (
-      <View style={styles.container}>
-        <FlatList
-          keyExtractor={(_: Fave, index: number) => index.toString()}
-          data={faves}
-          renderItem={({ item }) => this.renderFave(item)}
-        />
+      <View>
+        <Text>You have not imported your faves from vk.com yet</Text>
+        <ImportButton />
       </View>
     );
+  }
+
+  public render() {
+    const { isLoaded } = this.props;
+
+    const output = isLoaded ? this.renderFaveList() : this.renderImportButton();
+
+    return <View style={styles.container}>{output}</View>;
   }
 }
 
