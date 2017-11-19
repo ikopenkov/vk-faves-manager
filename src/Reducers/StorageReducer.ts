@@ -59,6 +59,7 @@ export interface StorageState {
 
 export interface StorageInstance {
   save(params: SaveParams): void;
+  remove: StorageRemove;
   load: StorageLoad<any>;
 }
 
@@ -68,6 +69,11 @@ interface SaveParams {
   key: string;
   data: any;
   expires?: number;
+}
+
+export type StorageRemove = (params: RemoveParams) => Promise<void>;
+interface RemoveParams {
+  key: string;
 }
 
 interface LoadParams {

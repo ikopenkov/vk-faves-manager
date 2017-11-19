@@ -12,7 +12,7 @@ interface State {
   isTruncated: boolean;
 }
 
-class Fave extends React.Component<Props, State> {
+class TruncatedText extends React.Component<Props, State> {
   constructor(props: Props, state: State) {
     super(props, state);
 
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Fave;
+export default TruncatedText;

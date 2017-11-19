@@ -18,6 +18,21 @@ export const loadStoredToken = () => (dispatch, getState): Promise<string> => {
     });
 };
 
+export const clearStoredToken = () => (dispatch, getState) => {
+  const storage = selectStorageInstance(getState());
+
+  return storage
+    .remove({
+      key: 'token',
+    })
+    .then(() => {
+      dispatch(unsetTokenAction());
+    })
+    .catch(() => {
+      console.log('some clear stored token error');
+    });
+};
+
 export const setToken = (token: string) => (dispatch, getState) => {
   const storage = selectStorageInstance(getState());
   storage.save({
