@@ -10,6 +10,7 @@ import {
 } from '../Actions/ActionCreators';
 import { handleActions, Action } from 'redux-actions';
 import { Fave } from '../api/FavesApi';
+import { State } from './index';
 
 const importing = handleActions(
   {
@@ -66,7 +67,7 @@ const faves = combineReducers({
 
 export default faves;
 
-const selectFaves = state => state.faves;
+const selectFaves = (state: State) => state.faves;
 
 export const selectIsImporting = createSelector(selectFaves, favesState => favesState.importing);
 export const selectIsImported = createSelector(selectFaves, favesState => favesState.imported);
@@ -76,8 +77,12 @@ export const selectIsLoaded = createSelector(selectFaves, favesState => favesSta
 
 export const selectFavesList = createSelector(selectFaves, favesState => favesState.list);
 
+export const selectHasFaves = createSelector(selectFavesList, favesList => !!favesList.length);
+
 export interface FavesState {
   loading: boolean;
   loaded: boolean;
-  list: any[];
+  importing: boolean;
+  imported: boolean;
+  list: Fave[];
 }

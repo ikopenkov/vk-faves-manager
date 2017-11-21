@@ -1,16 +1,27 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { View, FlatList, StyleSheet, Text } from 'react-native';
-import { selectFavesList, selectIsLoaded, selectIsLoading, selectIsImported, selectIsImporting } from '../../Reducers/FavesReducer';
-import { loadFaves } from '../../Actions/FavesActions';
+import { Button, View, FlatList, StyleSheet, Text } from 'react-native';
+import {
+  selectFavesList,
+  selectHasFaves,
+  selectIsLoaded,
+  selectIsLoading,
+  selectIsImported,
+  selectIsImporting,
+} from '../../Reducers/FavesReducer';
+import {
+  loadFaves as loadFavesAction,
+  importFaves as importFavesAction,
+} from '../../Actions/FavesActions';
 import { Fave as FaveData } from '../../Api/FavesApi';
 import { State } from '../../Reducers';
 import Fave from './Fave';
-import ImportButton from '../Home/ImportButton';
+import { Fave as FaveType } from '../../api/FavesApi';
 import 'moment/locale/ru';
 
 interface MapStateProps {
-  faves?: Object[];
+  faves: FaveType[];
+  hasFaves: boolean;
   isLoaded: boolean;
   isLoading: boolean;
   isImported: boolean;
@@ -18,6 +29,7 @@ interface MapStateProps {
 }
 interface MapDispatchProps {
   loadFaves(): void;
+  importFaves(): Promise<void>;
 }
 
 interface Props extends MapStateProps, MapDispatchProps {}
@@ -27,6 +39,7 @@ class FavesContainer extends React.Component<Props, any> {
     super(props);
 
     this.renderFave = this.renderFave.bind(this);
+    this.importButtonPressHandler = this.importButtonPressHandler.bind(this);
   }
 
   public componentDidMount() {
@@ -54,18 +67,32 @@ class FavesContainer extends React.Component<Props, any> {
   }
 
   private renderImportButton() {
+    const { isImporting } = this.props;
     return (
       <View>
         <Text>You have not imported your faves from vk.com yet</Text>
-        <ImportButton />
+        <Button
+          disabled={isImporting}
+          title={isImporting ? 'Importing...' : 'Press to start import'}
+          onPress={this.importButtonPressHandler}
+        />
       </View>
     );
   }
 
-  public render() {
-    const { isImported } = this.props;
+  private importButtonPressHandler() {
+    const { importFaves, loadFaves } = this.props;
+    importFaves().then(() => {
+      loadFaves();
+    });
+  }
 
-    const output = isImported ? this.renderFaveList() : this.renderImportButton();
+  public render() {
+    const { hasFaves, faves } = this.props;
+    console.log('asdf', faves);
+    
+
+    const output = hasFaves ? this.renderFaveList() : this.renderImportButton();
 
     return <View style={styles.container}>{output}</View>;
   }
@@ -85,6 +112,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps: (state: State) => MapStateProps = state => ({
   faves: selectFavesList(state),
+  hasFaves: selectHasFaves(state),
   isLoaded: selectIsLoaded(state),
   isLoading: selectIsLoading(state),
   isImporting: selectIsImporting(state),
@@ -92,7 +120,8 @@ const mapStateToProps: (state: State) => MapStateProps = state => ({
 });
 
 const mapDispatchToProps: (dispatch: any) => MapDispatchProps = dispatch => ({
-  loadFaves: () => dispatch(loadFaves()),
+  loadFaves: () => dispatch(loadFavesAction()),
+  importFaves: () => dispatch(importFavesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FavesContainer);

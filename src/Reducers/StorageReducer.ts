@@ -61,7 +61,7 @@ export interface StorageInstance {
   save(params: SaveParams): Promise<void>;
   remove: StorageRemove;
   load: StorageLoad<any>;
-  getIdsForKey(key: string): Promise<string[]>;
+  getIdsForKey(key: string): Promise<number[]>;
   getAllDataForKey(key: string): Promise<any>;
   clearMapForKey(key: string): Promise<void>;
 }
@@ -70,7 +70,7 @@ export type StorageLoad<T> = (params: LoadParams) => Promise<T>;
 
 interface SaveParams {
   key: string;
-  id?: string;
+  id?: number;
   data: any;
   expires?: number;
 }
@@ -78,12 +78,12 @@ interface SaveParams {
 export type StorageRemove = (params: RemoveParams) => Promise<void>;
 interface RemoveParams {
   key: string;
-  id?: string;
+  id?: number;
 }
 
 interface LoadParams {
   key: string;
-  id?: string;
+  id?: number;
 
   // autoSync(default true) means if data not found or expired,
   // then invoke the corresponding sync method

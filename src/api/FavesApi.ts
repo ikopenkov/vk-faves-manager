@@ -8,6 +8,10 @@ export const saveFaveToBd = (fave: Fave) => {
   return faveStorage.create(fave);
 };
 
+export const saveManyFavesToBd = (faves: Fave[]) => {
+  return faveStorage.createMany(faves);
+};
+
 export const fetchSavedFaves = () => {
   return faveStorage.fetch();
 };
@@ -22,14 +26,15 @@ interface LoadFavesParams {
   count?: number;
 }
 
-export const loadFaves = ({ token, offset = 0, count = 100 }: LoadFavesParams): Promise<FavesResponse> => {
+export const loadFavesFromVk = ({ token, offset = 0, count = 100 }: LoadFavesParams): Promise<FavesResponse> => {
   const query = {
     access_token: token,
     v: VK_API_VERSION,
-    extended: 1,
+    // extended: 1,
     offset,
     count
   };
+
   const url = Url.format({
     protocol: 'https',
     host: 'api.vk.com',

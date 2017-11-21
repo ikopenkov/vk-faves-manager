@@ -9,6 +9,8 @@ import {
 import { selectToken } from '../Reducers/UserReducer';
 import * as FavesApi from '../api/FavesApi';
 
+const VK_LOAD_FAVES_COUNT = 100;
+
 export const importFaves = () => (dispatch, getState): Promise<void> => {
   const token = selectToken(getState());
   if (!token) {
@@ -19,35 +21,40 @@ export const importFaves = () => (dispatch, getState): Promise<void> => {
       dispatch(importingFaves());
       return loadAndSave(token);
     })
-    .then(() => dispatch(importingFavesSucceeded()))
+    .then(() => {
+      dispatch(importingFavesSucceeded());
+    })
     .catch(error => {
       console.log('some importing error', error);
       return dispatch(importingFavesFailed());
     });
 };
 
-const loadAndSave = (token: string, importedFavesNumber: number = 0) => {
+const loadAndSave = (token: string, offset: number = 0) => {
   return new Promise<void>((resolve: () => void, reject: () => void) => {
-    setTimeout(() => {
-      FavesApi.loadFaves({ token, offset: importedFavesNumber }).then(result => {
-        console.log('loaded', result);
+    FavesApi.loadFavesFromVk({
+      token,
+      offset,
+      count: VK_LOAD_FAVES_COUNT,
+    }).then(result => {
+      const faves = result.response.items;
+      FavesApi.saveManyFavesToBd(faves)
+        .then(() => {
+          // count field in vk is larger than real number of existing posts yet,
+          // faves.length in response is almost ever lower than number was requested
+          offset += VK_LOAD_FAVES_COUNT;
+          const allItemsNumber = result.response.count;
 
-        const allItemsNumber = result.response.count;
-        const faves = result.response.items;
-        const savingToBdPromises = faves.map(fave => FavesApi.saveFaveToBd(fave));
-        return Promise.all(savingToBdPromises).then(() => {
-          importedFavesNumber += faves.length;
-          console.log('imported', importedFavesNumber);
-          if (importedFavesNumber < allItemsNumber) {
-            loadAndSave(token, importedFavesNumber)
+          if (offset < allItemsNumber) {
+            loadAndSave(token, offset)
               .then(resolve)
               .catch(reject);
           } else {
             resolve();
           }
-        });
-      });
-    }, 1500);
+        })
+        .catch(reject);
+    });
   });
 };
 
@@ -58,9 +65,9 @@ export const loadFaves = () => (dispatch, getState): Promise<FavesApi.Fave[]> =>
     throw 'Trying load faves without token';
   }
   return FavesApi.fetchSavedFaves()
-    .then(response => {
-      console.log('response', response);
-      return dispatch(loadingFavesSucceeded(response.response.items));
+    .then(faves => {
+      console.log('faves', faves);
+      return dispatch(loadingFavesSucceeded(faves.map(fave => fave.vkData)));
     })
     .catch(() => dispatch(loadingFavesFailed()));
 };

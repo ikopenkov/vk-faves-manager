@@ -29,7 +29,7 @@ const STORAGE = new Storage({
 const FAVE_KEY = 'fave';
 
 export interface FaveBDEntityParams {
-  id: string | number;
+  id: number;
   vkData: Fave;
 }
 
@@ -39,41 +39,50 @@ export interface FaveBDEntityParams {
 // }
 export default class RNFavesStorage {
   private storage: StorageInstance;
+  private lastId: number;
 
   constructor() {
     this.storage = STORAGE;
+
+    this.getLastId().then(lastId => this.lastId = lastId);
   }
 
   // public async fetch({ count, offset }: FetchParams) {
-  public async fetch() {
-    const allFaves = await this.storage.getAllDataForKey(FAVE_KEY);
-    console.log('allFaves', allFaves);
-    
-    return allFaves;
+  public async fetch(): Promise<FaveBDEntityParams[]> {
+    return await this.storage.getAllDataForKey(FAVE_KEY);
+  }
+
+  public async getById(id: number): Promise<Fave> {
+    return await this.storage.load({
+      key: FAVE_KEY,
+      id,
+    });
+  }
+
+  public async createMany(faves: Fave[]) {
+    const promises = faves.map(fave => this.create(fave));
+    return Promise.all(promises);
   }
 
   public async create(fave: Fave) {
-    const id = await this.getIdForNew();
+    const id = ++this.lastId;
     return await this.storage.save({
       key: FAVE_KEY,
       id,
       expires: null,
       data: {
-        xz: 'asdfsd',
         vkData: fave,
+        id,
       },
-    })
-    .then(() => console.log('saved fave to bd'))
-    .catch(error => console.log('some async storage fave saving error', error));
+    });
   }
 
   public async clearAll() {
     this.storage.clearMapForKey(FAVE_KEY);
   }
 
-  private async getIdForNew() {
+  private async getLastId() {
     const ids = (await this.storage.getIdsForKey(FAVE_KEY)) || [];
-    const lastId = ids[ids.length - 1];
-    return (lastId + 1).toString()  || '1';
+    return ids.length ? ids[ids.length - 1] : -1;
   }
 }
