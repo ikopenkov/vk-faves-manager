@@ -16,11 +16,19 @@ export const clearSavedFaves = () => {
   return faveStorage.clearAll();
 };
 
-export const loadFaves = (token: string): Promise<FavesResponse> => {
+interface LoadFavesParams {
+  token: string;
+  offset?: number;
+  count?: number;
+}
+
+export const loadFaves = ({ token, offset = 0, count = 100 }: LoadFavesParams): Promise<FavesResponse> => {
   const query = {
     access_token: token,
     v: VK_API_VERSION,
     extended: 1,
+    offset,
+    count
   };
   const url = Url.format({
     protocol: 'https',

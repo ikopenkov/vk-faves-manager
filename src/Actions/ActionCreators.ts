@@ -5,7 +5,7 @@ export const loadingFavesSucceeded: (response: any) => void = createAction('load
 export const loadingFavesFailed = createAction('loadingFavesFailed');
 
 export const importingFaves = createAction('importingFaves');
-export const importingFavesSucceeded: (response: any) => void = createAction('importingFavesSucceeded');
+export const importingFavesSucceeded = createAction('importingFavesSucceeded');
 export const importingFavesFailed = createAction('importingFavesFailed');
 
 export const setTokenAction: (token: string) => void = createAction('setToken');

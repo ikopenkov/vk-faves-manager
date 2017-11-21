@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { View, FlatList, StyleSheet, Text } from 'react-native';
-import { selectFavesList, selectIsLoaded, selectIsLoading } from '../../Reducers/FavesReducer';
+import { selectFavesList, selectIsLoaded, selectIsLoading, selectIsImported, selectIsImporting } from '../../Reducers/FavesReducer';
 import { loadFaves } from '../../Actions/FavesActions';
 import { Fave as FaveData } from '../../Api/FavesApi';
 import { State } from '../../Reducers';
@@ -13,6 +13,8 @@ interface MapStateProps {
   faves?: Object[];
   isLoaded: boolean;
   isLoading: boolean;
+  isImported: boolean;
+  isImporting: boolean;
 }
 interface MapDispatchProps {
   loadFaves(): void;
@@ -28,7 +30,7 @@ class FavesContainer extends React.Component<Props, any> {
   }
 
   public componentDidMount() {
-    // this.props.loadFaves();
+    this.props.loadFaves();
   }
 
   private renderFaveList() {
@@ -61,9 +63,9 @@ class FavesContainer extends React.Component<Props, any> {
   }
 
   public render() {
-    const { isLoaded } = this.props;
+    const { isImported } = this.props;
 
-    const output = isLoaded ? this.renderFaveList() : this.renderImportButton();
+    const output = isImported ? this.renderFaveList() : this.renderImportButton();
 
     return <View style={styles.container}>{output}</View>;
   }
@@ -85,6 +87,8 @@ const mapStateToProps: (state: State) => MapStateProps = state => ({
   faves: selectFavesList(state),
   isLoaded: selectIsLoaded(state),
   isLoading: selectIsLoading(state),
+  isImporting: selectIsImporting(state),
+  isImported: selectIsImported(state),
 });
 
 const mapDispatchToProps: (dispatch: any) => MapDispatchProps = dispatch => ({
