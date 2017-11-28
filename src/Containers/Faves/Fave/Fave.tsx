@@ -2,14 +2,14 @@ import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/ru';
-import { Fave as FaveData } from '../../../Api/FavesApi';
+import { FavePostProps } from '../../../Backend/Models';
 import ImagesGrid from '../ImagesGrid';
 import TruncatedText from '../../../Components/TruncatedText';
 
 const NUMBER_OF_LINES_TRUNCATED = 9;
 
 interface Props {
-  faveData: FaveData;
+  faveData: FavePostProps;
 }
 
 interface State {
@@ -49,8 +49,7 @@ class Fave extends React.Component<Props, State> {
     const { faveData } = this.props;
     const { date } = faveData;
 
-    const attachments = faveData.attachments || [];
-    const photos = attachments.filter(item => item.photo).map(item => item.photo);
+    const photos = faveData.photos;
 
     const containerStyle = isVisible ? styles.container : styles.hidden;
     // const containerStyle = styles.container;

@@ -37,6 +37,9 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		894D30FD06B7493CB6315DB8 /* libRNCookieManagerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F86B4F6AACA943B1833600AB /* libRNCookieManagerIOS.a */; };
+		D39A6C39B90743469709016F /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EAE792CACD114AFE9919F1B4 /* libRealmReact.a */; };
+		34D9526E28AD4C52AFC62AF7 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = DF2117CF93614001B77D4931 /* libc++.tbd */; };
+		5E22EB5F05654B0C8B7D8BB5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F5929A32C914B6F81C60AC8 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,6 +269,10 @@
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		CD254D301DFC4069AFC281F1 /* RNCookieManagerIOS.xcodeproj */ = {isa = PBXFileReference; name = "RNCookieManagerIOS.xcodeproj"; path = "../node_modules/react-native-cookies/ios/RNCookieManagerIOS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		F86B4F6AACA943B1833600AB /* libRNCookieManagerIOS.a */ = {isa = PBXFileReference; name = "libRNCookieManagerIOS.a"; path = "libRNCookieManagerIOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		499C8A61A03C45F5A9736CD6 /* RealmReact.xcodeproj */ = {isa = PBXFileReference; name = "RealmReact.xcodeproj"; path = "../node_modules/realm/react-native/ios/RealmReact.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		EAE792CACD114AFE9919F1B4 /* libRealmReact.a */ = {isa = PBXFileReference; name = "libRealmReact.a"; path = "libRealmReact.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		DF2117CF93614001B77D4931 /* libc++.tbd */ = {isa = PBXFileReference; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		3F5929A32C914B6F81C60AC8 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,6 +302,9 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				894D30FD06B7493CB6315DB8 /* libRNCookieManagerIOS.a in Frameworks */,
+				D39A6C39B90743469709016F /* libRealmReact.a in Frameworks */,
+				34D9526E28AD4C52AFC62AF7 /* libc++.tbd in Frameworks */,
+				5E22EB5F05654B0C8B7D8BB5 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,6 +474,7 @@
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				CD254D301DFC4069AFC281F1 /* RNCookieManagerIOS.xcodeproj */,
+				499C8A61A03C45F5A9736CD6 /* RealmReact.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -484,6 +495,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* TodoTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
+				67082DB0679044A09815DF8E /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -508,6 +520,16 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		67082DB0679044A09815DF8E /* Frameworks */ = {
+			isa = "PBXGroup";
+			children = (
+				DF2117CF93614001B77D4931 /* libc++.tbd */,
+				3F5929A32C914B6F81C60AC8 /* libz.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -1012,10 +1034,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 			};
 			name = Debug;
@@ -1037,10 +1061,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 			};
 			name = Release;
@@ -1063,6 +1089,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 			};
 			name = Debug;
@@ -1084,6 +1111,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 			};
 			name = Release;
@@ -1114,10 +1142,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 			};
 			name = Debug;
@@ -1148,10 +1178,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 			};
 			name = Release;
@@ -1177,6 +1209,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1201,6 +1234,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};

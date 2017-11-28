@@ -13,6 +13,8 @@ const VK_LOAD_FAVES_COUNT = 100;
 
 export const importFaves = () => (dispatch, getState): Promise<void> => {
   const token = selectToken(getState());
+  console.log('import...');
+  
   if (!token) {
     throw 'Trying load faves without token';
   }
@@ -38,8 +40,11 @@ const loadAndSave = (token: string, offset: number = 0) => {
       count: VK_LOAD_FAVES_COUNT,
     }).then(result => {
       const faves = result.response.items;
+      console.log('vk faves', faves);
       FavesApi.saveManyFavesToBd(faves)
         .then(() => {
+          console.log('---- saved');
+          
           // count field in vk is larger than real number of existing posts yet,
           // faves.length in response is almost ever lower than number was requested
           offset += VK_LOAD_FAVES_COUNT;
@@ -58,7 +63,7 @@ const loadAndSave = (token: string, offset: number = 0) => {
   });
 };
 
-export const loadFaves = () => (dispatch, getState): Promise<FavesApi.Fave[]> => {
+export const loadFaves = () => (dispatch, getState) => {
   dispatch(loadingFaves());
   const token = selectToken(getState());
   if (!token) {
@@ -67,7 +72,7 @@ export const loadFaves = () => (dispatch, getState): Promise<FavesApi.Fave[]> =>
   return FavesApi.fetchSavedFaves()
     .then(faves => {
       console.log('faves', faves);
-      return dispatch(loadingFavesSucceeded(faves.map(fave => fave.vkData)));
+      return dispatch(loadingFavesSucceeded(faves));
     })
     .catch(() => dispatch(loadingFavesFailed()));
 };

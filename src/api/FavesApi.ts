@@ -1,23 +1,77 @@
 import * as Url from 'url';
 import { VK_API_VERSION } from '../Constants';
-import FaveStorage from './DataStorage/RNFavesStorage';
+import { getRealm } from '../Backend/Realm';
+import { FavePostProps, PhotoProps } from '../Backend/Models';
 
-const faveStorage = new FaveStorage();
+// export const saveFaveToBd = (fave: Fave) => {
+  // getRealm()
+  // .then(realm => {
+  //   realm.write(() => {
 
-export const saveFaveToBd = (fave: Fave) => {
-  return faveStorage.create(fave);
-};
+  //   });
+  // })
+// };
 
 export const saveManyFavesToBd = (faves: Fave[]) => {
-  return faveStorage.createMany(faves);
+  return getRealm()
+  .then(realm => {
+    return realm.write(() => {
+      faves.map(faveData => {
+        const fave = realm.create('FavePost', {
+          vkId: faveData.id,
+          fromVkId: faveData.from_id,
+          text: faveData.text,
+          ownerVkId: faveData.owner_id,
+          date: faveData.date,
+          photos: [],
+        });
+
+        const attachments = faveData.attachments || [];
+        attachments.reduce((photos, { photo }) => {
+          if (photo) {
+            photos.push(realm.create('Photo', {
+              vkId: photo.id,
+              text: photo.text,
+              height: photo.height,
+              width: photo.width,
+              photo_75: photo.photo_75,
+              photo_130: photo.photo_130,
+              photo_604: photo.photo_604,
+              photo_807: photo.photo_807,
+              post: fave,
+            }));
+          }
+          return photos;
+        }, fave.photos);
+      });
+    });
+  });
 };
 
 export const fetchSavedFaves = () => {
-  return faveStorage.fetch();
+  return getRealm()
+  .then(realm => {
+    return realm.objects<FavePostProps>('FavePost');
+  });
 };
 
 export const clearSavedFaves = () => {
-  return faveStorage.clearAll();
+  return getRealm()
+  .then(realm => {
+    return realm.write(() => {
+      const allFavePosts = realm.objects<FavePostProps>('FavePost');
+      const allPhotos = realm.objects<PhotoProps>('Photo');
+      console.log('before delete', allFavePosts.length, allPhotos.length);
+      const deletingEntities = [];
+      if (allFavePosts.length) {
+        deletingEntities.push(allFavePosts);
+      }
+      if (allPhotos.length) {
+        deletingEntities.push(allPhotos);
+      }
+      realm.delete(deletingEntities);
+    });
+  });
 };
 
 interface LoadFavesParams {

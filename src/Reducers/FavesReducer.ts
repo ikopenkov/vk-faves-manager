@@ -9,7 +9,7 @@ import {
   importingFavesSucceeded,
 } from '../Actions/ActionCreators';
 import { handleActions, Action } from 'redux-actions';
-import { Fave } from '../api/FavesApi';
+import { FavePostProps } from '../Backend/Models';
 import { State } from './index';
 
 const importing = handleActions(
@@ -50,7 +50,7 @@ const loaded = handleActions(
 
 const list = handleActions(
   {
-    [loadingFavesSucceeded.toString()]: (_, action: Action<Fave[]>) => {
+    [loadingFavesSucceeded.toString()]: (_, action: Action<FavePostProps[]>) => {
       return action.payload.slice();
     },
   },
@@ -84,5 +84,5 @@ export interface FavesState {
   loaded: boolean;
   importing: boolean;
   imported: boolean;
-  list: Fave[];
+  list: FavePostProps[];
 }

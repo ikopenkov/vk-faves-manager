@@ -13,14 +13,13 @@ import {
   loadFaves as loadFavesAction,
   importFaves as importFavesAction,
 } from '../../Actions/FavesActions';
-import { Fave as FaveData } from '../../Api/FavesApi';
 import { State } from '../../Reducers';
 import Fave from './Fave';
-import { Fave as FaveType } from '../../api/FavesApi';
+import { FavePostProps } from '../../Backend/Models';
 import 'moment/locale/ru';
 
 interface MapStateProps {
-  faves: FaveType[];
+  faves: FavePostProps[];
   hasFaves: boolean;
   isLoaded: boolean;
   isLoading: boolean;
@@ -57,7 +56,7 @@ class FavesContainer extends React.Component<Props, any> {
     );
   }
 
-  private renderFave(fave: FaveData) {
+  private renderFave(fave: FavePostProps) {
     // let textElement;
     return (
       <View style={styles.faveWrapper}>

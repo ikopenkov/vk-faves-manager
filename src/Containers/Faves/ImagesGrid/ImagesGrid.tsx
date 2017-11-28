@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { View, TouchableHighlight, Image, StyleSheet } from 'react-native';
-import { Photo } from '../../../api/FavesApi';
+import { PhotoProps } from '../../../Backend/Models';
 import { popNumber } from '../../../Utils/Array';
 import { Actions } from 'react-native-router-flux';
 
 interface Props {
-  items: Photo[];
+  items: PhotoProps[];
 }
 
 interface State {
@@ -18,7 +18,7 @@ interface RenderImageParams {
   width: string | number;
   height: string | number;
   key: number;
-  photo: Photo;
+  photo: PhotoProps;
 }
 
 class ImagesGrid extends React.Component<Props, State> {
@@ -27,7 +27,7 @@ class ImagesGrid extends React.Component<Props, State> {
 
     this.imageTouchHandler = this.imageTouchHandler.bind(this);
   }
-  private renderImagesRows(givenItems: Photo[], rows: React.ReactNode[][] = []) {
+  private renderImagesRows(givenItems: PhotoProps[], rows: React.ReactNode[][] = []) {
     const items = givenItems.slice();
 
     const popRenderPush = number => {
@@ -58,7 +58,7 @@ class ImagesGrid extends React.Component<Props, State> {
     return rows;
   }
 
-  private renderSomeImages(items: Photo[]) {
+  private renderSomeImages(items: PhotoProps[]) {
     const paramsByNumber = {
       6: {
         height: 40,
@@ -96,10 +96,10 @@ class ImagesGrid extends React.Component<Props, State> {
       throw `invalid photos number to render ${items.length}`;
     }
 
-    return items.map(item =>
+    return items.map((item, index) =>
       this.renderImage({
         uri: item[params.photoSize],
-        key: item.id,
+        key: index,
         width: params.width,
         height: params.height,
         photo: item,
@@ -119,7 +119,7 @@ class ImagesGrid extends React.Component<Props, State> {
     );
   }
 
-  private imageTouchHandler(photo: Photo) {
+  private imageTouchHandler(photo: PhotoProps) {
     const { items } = this.props;
     const index = items.findIndex(item => item === photo);
     
