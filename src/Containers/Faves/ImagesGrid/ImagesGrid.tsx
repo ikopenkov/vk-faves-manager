@@ -121,8 +121,8 @@ class ImagesGrid extends React.Component<Props, State> {
 
   private imageTouchHandler(photo: PhotoProps) {
     const { items } = this.props;
-    const index = items.findIndex(item => item === photo);
-    
+    const index = items.findIndex(item => item.id === photo.id);
+
     Actions.photo({
       items,
       index,

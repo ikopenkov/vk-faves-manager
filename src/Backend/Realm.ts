@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import { FavePost, Photo } from './Models';
+import { FavePost, Photo, Group, Profile } from './Models';
 
 let realm: Realm;
 
@@ -9,7 +9,7 @@ export const getRealm = () => {
       resolve(realm);
     } else {
       Realm.open({
-        schema: [Photo, FavePost],
+        schema: [Photo, FavePost, Group, Profile],
         inMemory: true,
       })
         .then(realmInstance => {

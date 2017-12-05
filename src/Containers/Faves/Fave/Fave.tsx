@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/ru';
-import { FavePostProps } from '../../../Backend/Models';
+import { FavePostProps, GroupProps, ProfileProps } from '../../../Backend/Models';
 import ImagesGrid from '../ImagesGrid';
 import TruncatedText from '../../../Components/TruncatedText';
 
@@ -44,6 +44,27 @@ class Fave extends React.Component<Props, State> {
     );
   }
 
+  private renderAvatar() {
+  return (
+    <View style={styles.avatarWrapper}>
+      <Image style={styles.avatarImage} source={{ uri: this.author.photo_50 || this.author.photo_100 }}  />
+    </View>
+  );
+  }
+
+  private renderAuthorName() {
+    return <Text numberOfLines={1} style={styles.authorName}>{this.author.name}</Text>;
+  }
+
+  get author(): GroupProps | ProfileProps {
+    const { faveData: { authorGroup, authorProfile, id } } = this.props;
+    const author = authorGroup || authorProfile;
+    if (!author) {
+      throw `Post ${id} has not author?`;
+    }
+    return author;
+  }
+  
   public render() {
     const { isVisible } = this.state;
     const { faveData } = this.props;
@@ -57,9 +78,9 @@ class Fave extends React.Component<Props, State> {
     return (
       <View style={containerStyle}>
         <View style={styles.header}>
-          <View style={styles.avatar} />
+          {this.renderAvatar()}
           <View style={styles.headerCaptions}>
-            <Text style={styles.authorName}>Какой-то паблик</Text>
+            {this.renderAuthorName()}
             <Text style={styles.date}>{this.formatDate(date)}</Text>
           </View>
         </View>
@@ -86,12 +107,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
   },
-  avatar: {
+  avatarWrapper: {
     width: 40,
     height: 40,
-    backgroundColor: '#5d80a6',
     borderRadius: 40,
     marginRight: 7,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarImage: {
+    flex: 1,
+    width: '100%',
   },
   headerCaptions: {
     flex: 1,

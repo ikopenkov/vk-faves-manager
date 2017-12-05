@@ -1,63 +1,94 @@
 import * as Url from 'url';
 import { VK_API_VERSION } from '../Constants';
 import { getRealm } from '../Backend/Realm';
-import { FavePostProps, PhotoProps } from '../Backend/Models';
+import { FavePostProps, PhotoProps, GroupProps, ProfileProps } from '../Backend/Models';
 
 // export const saveFaveToBd = (fave: Fave) => {
-  // getRealm()
-  // .then(realm => {
-  //   realm.write(() => {
+// getRealm()
+// .then(realm => {
+//   realm.write(() => {
 
-  //   });
-  // })
+//   });
+// })
 // };
 
-export const saveManyFavesToBd = (faves: Fave[]) => {
-  return getRealm()
-  .then(realm => {
+export const saveManyFavesToBd = ({ items, groups, profiles }: FavesResponseData) => {
+  return getRealm().then(realm => {
     return realm.write(() => {
-      faves.map(faveData => {
-        const fave = realm.create('FavePost', {
-          vkId: faveData.id,
-          fromVkId: faveData.from_id,
+      const savedGroups = groups.map(groupData => realm.create<GroupProps>('Group', {
+          id: groupData.id,
+          name: groupData.name,
+          urlName: groupData.screen_name,
+          photo_50: groupData.photo_50 || null,
+          photo_100: groupData.photo_100 || null,
+          photo_200: groupData.photo_200 || null,
+        }, true));
+
+      const savedProfiles = profiles.map(profileData => realm.create<ProfileProps>('Profile', {
+        id: profileData.id,
+        firstName: profileData.first_name,
+        lastName: profileData.last_name,
+        urlName: profileData.screen_name,
+        photo_50: profileData.photo_50 || null,
+        photo_100: profileData.photo_100 || null,
+      }, true));
+
+      items.map(faveData => {
+        const authorId = Math.abs(faveData.from_id); // Because sometimes it is negative for unknown reason
+        const ownerId = Math.abs(faveData.owner_id); // Because sometimes it is negative for unknown reason
+        const fave = realm.create<FavePostProps>('FavePost', {
+          id: faveData.id,
           text: faveData.text,
-          ownerVkId: faveData.owner_id,
           date: faveData.date,
           photos: [],
-        });
+          authorId,
+          ownerId,
+        }, true);
 
         const attachments = faveData.attachments || [];
         attachments.reduce((photos, { photo }) => {
           if (photo) {
-            photos.push(realm.create('Photo', {
-              vkId: photo.id,
-              text: photo.text,
-              height: photo.height,
-              width: photo.width,
-              photo_75: photo.photo_75,
-              photo_130: photo.photo_130,
-              photo_604: photo.photo_604,
-              photo_807: photo.photo_807,
-              post: fave,
-            }));
+            photos.push(
+              realm.create<PhotoProps>('Photo', {
+                id: photo.id,
+                text: photo.text,
+                height: photo.height,
+                width: photo.width,
+                photo_75: photo.photo_75,
+                photo_130: photo.photo_130,
+                photo_604: photo.photo_604,
+                photo_807: photo.photo_807,
+                post: fave,
+              }, true)
+            );
           }
           return photos;
         }, fave.photos);
+
+        const authorGroup = savedGroups.find(group => group.id === authorId);
+        if (authorGroup) {
+          fave.authorGroup = authorGroup;
+          // const posts = authorGroup.posts || [];
+          // authorGroup.posts = [...posts, fave];
+        } else {
+          const authorProfile = savedProfiles.find(profile => profile.id === authorId);
+          fave.authorProfile = authorProfile;
+          // const posts = authorProfile.posts || [];
+          // authorProfile.posts = [...posts, fave];
+        }
       });
     });
   });
 };
 
 export const fetchSavedFaves = () => {
-  return getRealm()
-  .then(realm => {
+  return getRealm().then(realm => {
     return realm.objects<FavePostProps>('FavePost');
   });
 };
 
 export const clearSavedFaves = () => {
-  return getRealm()
-  .then(realm => {
+  return getRealm().then(realm => {
     return realm.write(() => {
       const allFavePosts = realm.objects<FavePostProps>('FavePost');
       const allPhotos = realm.objects<PhotoProps>('Photo');
@@ -80,13 +111,17 @@ interface LoadFavesParams {
   count?: number;
 }
 
-export const loadFavesFromVk = ({ token, offset = 0, count = 100 }: LoadFavesParams): Promise<FavesResponse> => {
+export const loadFavesFromVk = ({
+  token,
+  offset = 0,
+  count = 100,
+}: LoadFavesParams): Promise<FavesResponse> => {
   const query = {
     access_token: token,
     v: VK_API_VERSION,
-    // extended: 1,
+    extended: 1,
     offset,
-    count
+    count,
   };
 
   const url = Url.format({
@@ -106,10 +141,14 @@ export const loadFavesFromVk = ({ token, offset = 0, count = 100 }: LoadFavesPar
 };
 export interface FavesResponse {
   type: string;
-  response: {
-    count: number;
-    items: Fave[];
-  };
+  response: FavesResponseData;
+}
+
+export interface FavesResponseData {
+  count: number;
+  items: Fave[];
+  groups: Group[];
+  profiles: Profile[];
 }
 
 export interface Fave {
@@ -163,4 +202,26 @@ export interface Photo {
   text: string;
   user_id: number;
   width: number;
+}
+
+export interface Group {
+  id: number;
+  is_closed: 0 | 1 | 2;
+  name: string;
+  photo_50: string;
+  photo_100: string;
+  photo_200: string;
+  screen_name: string;
+  type: 'group' | 'page' | 'event';
+}
+
+export interface Profile {
+  id: number;
+  first_name: string;
+  last_name: string;
+  online?: 0 | 1;
+  photo_50?: string;
+  photo_100?: string;
+  screen_name?: string;
+  sex?: 0 | 1 | 2;
 }

@@ -39,12 +39,10 @@ const loadAndSave = (token: string, offset: number = 0) => {
       offset,
       count: VK_LOAD_FAVES_COUNT,
     }).then(result => {
-      const faves = result.response.items;
-      console.log('vk faves', faves);
-      FavesApi.saveManyFavesToBd(faves)
+      console.log('vk faves', result.response);
+      FavesApi.saveManyFavesToBd(result.response)
         .then(() => {
           console.log('---- saved');
-          
           // count field in vk is larger than real number of existing posts yet,
           // faves.length in response is almost ever lower than number was requested
           offset += VK_LOAD_FAVES_COUNT;
